@@ -1,0 +1,42 @@
+
+import sqlite3
+
+# our database file. it stores every review we ever analyze.
+DB_FILE = "feedback.db"
+
+def init_db():
+    """Create the feedback table the first time we run."""
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS feedback(
+            id INTEGER PRIMARY KEY,
+            review TEXT,
+            label TEXT,
+            score INTEGER,
+            theme TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def save_results(results):
+    """Write all analyzed reviews into the database."""
+    conn = sqlite3.connect(DB_FILE)
+    for r in results:
+        conn.execute(
+            "INSERT INTO feedback (review, label, score, theme) VALUES (?, ?, ?, ?)",
+            (r["review"], r["label"], r["score"], r["theme"]),
+        )
+    # Moved outside the for-loop so all items save before closing
+    conn.commit()
+    conn.close()
+
+def load_history():
+    """Read every review we have saved so far."""
+    conn = sqlite3.connect(DB_FILE)
+    # Fixed column names to match 'review' and 'label' from CREATE TABLE
+    rows = conn.execute(
+        "SELECT review, label, score, theme FROM feedback ORDER BY id DESC"
+    ).fetchall()
+    conn.close()
+    return rows
