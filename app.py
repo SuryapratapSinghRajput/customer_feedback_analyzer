@@ -4,7 +4,7 @@ import pandas as pd
 from database import init_db, save_results, load_history
 
 # FastAPI endpoint URL
-API_URL = "http://127.0.0.1:8000/analyze"
+API_URL = "https://customer-feedback-analyzer-1.onrender.com"
 
 # Initialize your feedback.db table on startup
 init_db()
